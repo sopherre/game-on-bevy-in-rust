@@ -4,7 +4,19 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bevy = "0.15"
+rand = "0.8.0"
+rand_chacha = "0.3.1"
 
 [[bin]]
 name = "game-on-bevy-in-rust"
 path = "src/main.rs"
+
+[profile.dev]
+opt-level = 1  # 開発中の最適化（コンパイル速度と実行速度のバランスを取る）
+
+[profile.release]
+lto = "thin"  # リリースビルド時のリンク最適化を有効化
+opt-level = 3  # 最大限の最適化を適用
+codegen-units = 1  # パフォーマンス最適化のためコンパイル単位を1にする
+panic = "abort"  # パニック時のバックトレースを無効化してバイナリサイズを削減

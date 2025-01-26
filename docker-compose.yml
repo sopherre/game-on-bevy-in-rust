@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     build:
@@ -8,6 +6,12 @@ services:
     volumes:
       - .:/app
       - /app/target
-      - ~/.ssh:/root/.ssh:ro # ホストの~/.sshディレクトリをコンテナの/root/.sshに読み取り専用でマウント
+      - ~/.ssh:/root/.ssh:ro # SSH鍵の読み取り専用マウント
+    environment:
+      - DISPLAY=host.docker.internal:0
+      - PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
+      - RUST_BACKTRACE=1 # デバッグ用のバックトレースを有効化
+    platform: linux/amd64 # M1/M2 Mac の場合、エミュレーションを指定
+    network_mode: "host" # X11接続を可能に
     stdin_open: true
     tty: true
