@@ -4,12 +4,13 @@ FROM rust:latest
 # コンテナ内の作業ディレクトリを `/app` に設定
 WORKDIR /app
 
-# システムパッケージの更新と make のインストール
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  make \  
-  && rm -rf /var/lib/apt/lists/*  # キャッシュ削除によりイメージサイズを最小化
+# システムパッケージの更新
+RUN apt-get update
 
-# Rust のフォーマットツール `rustfmt` をインストール
+# make のインストール
+RUN apt-get install -y --no-install-recommends make && rm -rf /var/lib/apt/lists/*
+
+# Rust のフォーマットツール `rustfmt` と `clippy` をインストール
 RUN rustup component add rustfmt
 
 # `cargo-watch` をインストールし、ファイル変更を監視して自動ビルド・実行を可能にする
@@ -18,7 +19,7 @@ RUN cargo install cargo-watch
 # Rust の依存関係を事前にフェッチ（キャッシュ効率を向上）
 # このステップで依存関係を分離することで、コードの変更によるビルドの影響を軽減
 COPY ./Cargo.toml ./Cargo.lock /app/
-RUN cargo fetch || true  # ネットワーク問題で失敗しても続行
+RUN cargo fetch || true
 
 # プロジェクトのソースコードをコンテナ内にコピー
 COPY ./src /app/src
